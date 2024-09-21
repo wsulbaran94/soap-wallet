@@ -21,6 +21,7 @@ Route::get('/', function () {
 
 Route::post('soap/client/register', [ClientController::class, 'register']);
 Route::post('soap/wallet/recharge', [WalletController::class, 'rechargeWallet']);
+Route::post('soap/wallet/balance', [WalletController::class, 'balance']);
 
 Route::get('/wsdl', function () {
     return response()->file(public_path('wsdl/client.wsdl'));

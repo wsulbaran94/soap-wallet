@@ -13,7 +13,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
-        'soap/client/register',
+        'soap/*',
         'wsdl'
     ];
 }

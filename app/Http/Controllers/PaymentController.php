@@ -15,7 +15,7 @@ class PaymentController extends Controller
     {
         SoapWrapper::add(function ($service) {
             $service
-                ->name('ClientService')
+                ->name('PaymentService')
                 ->wsdl(public_path('wsdl/payment.wsdl'))
                 ->trace(true)
                 ->cache(0);
@@ -78,7 +78,9 @@ class PaymentController extends Controller
 
         $payment = Payment::create($buildPayment);
 
-        return $this->response(true, '00', 'Pago registrado');
+        $data = ['email' => $existClient->email, 'sessionId' => $sessionId, 'token' => $token];
+        
+        return $this->response(true, '00', 'Pago registrado',  $data);
     }
 
     public function confirmPayment () {

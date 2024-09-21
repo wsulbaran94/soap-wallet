@@ -6,7 +6,6 @@ use App\Models\Wallet;
 
 use SoapWrapper;
 use Illuminate\Http\Request;
-use Mtownsend\XmlToArray\XmlToArray;
 
 class ClientController extends Controller
 {

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use SoapWrapper;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
@@ -9,6 +10,17 @@ use App\Models\Wallet;
 class WalletController extends Controller
 {
     //
+
+    public function __construct()
+    {
+        SoapWrapper::add(function ($service) {
+            $service
+                ->name('ClientService')
+                ->wsdl(public_path('wsdl/client.wsdl'))
+                ->trace(true)
+                ->cache(0);
+        });
+    }
 
     public function rechargeWallet (Request $request) {
         $xmlContent = file_get_contents('php://input');
@@ -28,13 +40,13 @@ class WalletController extends Controller
 
         $toJson = json_decode(json_encode($xml), true);
 
+        if (empty($toJson['document']) || empty($toJson['phone']) || empty($toJson['amount'])) {
+            return $this->response(false, '01', 'Campos requeridos faltantes');
+        }
+
         $document = $toJson['document'];
         $phone = $toJson['phone'];
         $amount = $toJson['amount'];
-
-        if (empty($document) || empty($phone) || empty($amount)) {
-            return $this->response(false, '01', 'Campos requeridos faltantes');
-        }
 
         $existClient = Client::where('document', $document)->where('phone', $phone)->first();
 
@@ -48,7 +60,7 @@ class WalletController extends Controller
             return $this->response(false, '05', 'Billetera no encontrada');
         }
 
-        $wallet->amount = $wallet->amount + (int)$amount;
+        $wallet->balance = $wallet->balance + (int)$amount;
 
         $wallet->save();
 
@@ -74,12 +86,14 @@ class WalletController extends Controller
 
         $toJson = json_decode(json_encode($xml), true);
 
+        if (empty($toJson['document']) || empty($toJson['phone'])) {
+            return $this->response(false, '01', 'Campos requeridos faltantes');
+        }
+
         $document = $toJson['document'];
         $phone = $toJson['phone'];
 
-        if (empty($document) || empty($phone)) {
-            return $this->response(false, '01', 'Campos requeridos faltantes');
-        }
+        
 
         $existClient = Client::where('document', $document)->where('phone', $phone)->first();
 

@@ -8,4 +8,11 @@ use Illuminate\Database\Eloquent\Model;
 class Wallet extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['client_id', 'balance'];
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
 }

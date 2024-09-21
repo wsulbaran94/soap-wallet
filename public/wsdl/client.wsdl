@@ -1,0 +1,73 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/" 
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://example.com/clientservice" 
+    targetNamespace="http://example.com/clientservice">
+
+  <types>
+    <xsd:schema targetNamespace="http://example.com/clientservice">
+        
+      <!-- Elemento para la solicitud de registro -->
+      <xsd:element name="registerRequest">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="document" type="xsd:string"/>
+            <xsd:element name="name" type="xsd:string"/>
+            <xsd:element name="email" type="xsd:string"/>
+            <xsd:element name="phone" type="xsd:string"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+
+      <!-- Elemento para la respuesta de registro -->
+      <xsd:element name="registerResponse">
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="success" type="xsd:boolean"/>
+            <xsd:element name="cod_error" type="xsd:string"/>
+            <xsd:element name="message_error" type="xsd:string"/>
+            <xsd:element name="data" type="xsd:string" minOccurs="0"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+    </xsd:schema>
+  </types>
+
+  <!-- Definir mensajes para las solicitudes y respuestas -->
+  <message name="registerRequestMessage">
+    <part name="parameters" element="tns:registerRequest"/>
+  </message>
+
+  <message name="registerResponseMessage">
+    <part name="parameters" element="tns:registerResponse"/>
+  </message>
+
+  <!-- Definir el portType que especifica las operaciones del servicio -->
+  <portType name="ClientServicePortType">
+    <operation name="register">
+      <input message="tns:registerRequestMessage"/>
+      <output message="tns:registerResponseMessage"/>
+    </operation>
+  </portType>
+
+  <!-- Definir la binding para asociar el portType a SOAP -->
+  <binding name="ClientServiceBinding" type="tns:ClientServicePortType">
+    <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <operation name="register">
+      <soap:operation soapAction="http://example.com/clientservice/register"/>
+      <input>
+        <soap:body use="literal"/>
+      </input>
+      <output>
+        <soap:body use="literal"/>
+      </output>
+    </operation>
+  </binding>
+
+  <!-- Definir el servicio -->
+  <service name="ClientService">
+    <port name="ClientServicePort" binding="tns:ClientServiceBinding">
+      <soap:address location="http://your-domain.com/api/soap"/>
+    </port>
+  </service>
+</definitions>

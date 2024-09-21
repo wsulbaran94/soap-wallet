@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\WalletController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,4 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
+});
+
+Route::post('soap/client/register', [ClientController::class, 'register']);
+Route::post('soap/wallet/recharge', [WalletController::class, 'rechargeWallet']);
+
+Route::get('/wsdl', function () {
+    return response()->file(public_path('wsdl/client.wsdl'));
 });

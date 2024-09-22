@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use SoapWrapper;
 
 use Illuminate\Http\Request;
 use App\Models\Client;
@@ -10,35 +9,11 @@ use App\Models\Payment;
 
 class PaymentController extends Controller
 {
-    //
-    public function __construct()
-    {
-        SoapWrapper::add(function ($service) {
-            $service
-                ->name('PaymentService')
-                ->wsdl(public_path('wsdl/payment.wsdl'))
-                ->trace(true)
-                ->cache(0);
-        });
-    }
 
     public function payment(Request $request)
-    {
-        $xmlContent = file_get_contents('php://input');
-
-        libxml_use_internal_errors(true);
-
+    {   
+        $xmlContent = $request->getContent();
         $xml = simplexml_load_string($xmlContent);
-
-        if ($xml === false) {
-            $errors = libxml_get_errors();
-            foreach ($errors as $error) {
-                echo "Error: {$error->message}\n";
-            }
-            libxml_clear_errors();
-            return $this->response(false, '01', 'Error en el XML');
-        }
-
         $toJson = json_decode(json_encode($xml), true);
 
         if (empty($toJson['document']) || empty($toJson['phone']) || empty($toJson['amount'])) {

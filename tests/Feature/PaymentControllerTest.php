@@ -51,7 +51,7 @@ class PaymentControllerTest extends TestCase
         $responsePayment->assertJson([
             'success' => true,
             'cod_error' => '00',
-            'message_error' => 'Pago registrado',
+            'message' => 'Pago registrado',
         ]);
     }
 

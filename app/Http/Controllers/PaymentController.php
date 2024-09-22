@@ -58,22 +58,9 @@ class PaymentController extends Controller
         return $this->response(true, '00', 'Pago registrado',  $data);
     }
 
-    public function confirmPayment () {
-        $xmlContent = file_get_contents('php://input');
-
-        libxml_use_internal_errors(true);
-
+    public function confirmPayment (Request $request) {
+        $xmlContent = $request->getContent();
         $xml = simplexml_load_string($xmlContent);
-
-        if ($xml === false) {
-            $errors = libxml_get_errors();
-            foreach ($errors as $error) {
-                echo "Error: {$error->message}\n";
-            }
-            libxml_clear_errors();
-            return $this->response(false, '01', 'Error en el XML');
-        }
-
         $toJson = json_decode(json_encode($xml), true);
 
         if (empty($toJson['sessionId']) || empty($toJson['token'])) {
@@ -83,16 +70,11 @@ class PaymentController extends Controller
         $sessionId = $toJson['sessionId'];
         $token = $toJson['token'];
 
-        
-
         $payment = Payment::where('sesion_id', $sessionId)->where('token', $token)->where('status', 'PENDING')->first();
 
         if (!$payment) {
             return $this->response(false, '07', 'Pago no encontrado o token incorrecto');
         }
-
-        $payment->status = 'CONFIRMED';
-        $payment->save();
 
         $wallet = Wallet::where('client_id', $payment->client_id)->first();
 
@@ -101,18 +83,28 @@ class PaymentController extends Controller
         }
 
         $wallet->balance = $wallet->balance - $payment->amount;
-
         $wallet->save();
+
+        $payment->status = 'CONFIRMED';
+        $payment->save();
 
         return $this->response(true, '00', 'Pago confirmado', $wallet);
     }
 
     private function response($success, $code, $message, $data = null)
     {
+        if($code != '00') {
+            return [
+                'success' => $success,
+                'cod_error' => $code,
+                'message_error' => $message
+            ];
+        }
+        
         return [
             'success' => $success,
             'cod_error' => $code,
-            'message_error' => $message,
+            'message' => $message,
             'data' => $data
         ];
     }

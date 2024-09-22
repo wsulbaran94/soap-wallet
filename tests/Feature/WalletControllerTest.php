@@ -49,7 +49,7 @@ class WalletControllerTest extends TestCase
         $response->assertJson([
             'success' => true,
             'cod_error' => '00',
-            'message_error' => 'Consulta exitosa',
+            'message' => 'Consulta exitosa',
             'data' => [
                 'balance' => $response['data']['balance']
             ]
@@ -110,7 +110,7 @@ class WalletControllerTest extends TestCase
         $response->assertJson([
             'success' => true,
             'cod_error' => '00',
-            'message_error' => 'Recarga exitosa',
+            'message' => 'Recarga exitosa',
             'data' => [
                 'balance' => $response['data']['balance']
             ]

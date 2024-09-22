@@ -35,7 +35,7 @@ class ClientControllerTest extends TestCase
         $response->assertJson([
             'success' => true,
             'cod_error' => '00',
-            'message_error' => 'Cliente registrado exitosamente',
+            'message' => 'Cliente registrado exitosamente',
             'data' => null
         ]);
     }

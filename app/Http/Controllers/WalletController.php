@@ -38,7 +38,7 @@ class WalletController extends Controller
 
         $wallet->save();
 
-        return $this->response(true, '00', 'Recarga exitosa', $wallet);
+        return $this->response(true, '00', 'Recarga exitosa', ['balance' => $wallet->balance]);
 
     }
 
@@ -67,15 +67,23 @@ class WalletController extends Controller
             return $this->response(false, '05', 'Billetera no encontrada');
         }
 
-        return $this->response(true, '00', 'Consulta exitosa', $wallet);
+        return $this->response(true, '00', 'Consulta exitosa', ['balance' => $wallet->balance]);
     }
 
     private function response($success, $code, $message, $data = null)
     {
+        if($code != '00') {
+            return [
+                'success' => $success,
+                'cod_error' => $code,
+                'message_error' => $message
+            ];
+        }
+        
         return [
             'success' => $success,
             'cod_error' => $code,
-            'message_error' => $message,
+            'message' => $message,
             'data' => $data
         ];
     }

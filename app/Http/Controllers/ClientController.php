@@ -24,6 +24,12 @@ class ClientController extends Controller
         $email = $toJson['email'];
         $phone = $toJson['phone'];
 
+        $exists = Client::where('document', $document)->first();
+
+        if ($exists) {
+            return $this->response(false, '09', 'Cliente ya registrado');
+        }
+
         $client = Client::create([
             'document' => $document,
             'email' => $email,
@@ -41,10 +47,18 @@ class ClientController extends Controller
 
     private function response($success, $code, $message, $data = null)
     {
+        if($code != '00') {
+            return [
+                'success' => $success,
+                'cod_error' => $code,
+                'message_error' => $message
+            ];
+        }
+        
         return [
             'success' => $success,
             'cod_error' => $code,
-            'message_error' => $message,
+            'message' => $message,
             'data' => $data
         ];
     }

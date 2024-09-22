@@ -1,0 +1,118 @@
+<definitions xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    xmlns:tns="http://example.com/paymentService"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    targetNamespace="http://example.com/paymentService">
+
+    <!-- Definir tipos de datos -->
+    <types>
+        <xsd:schema targetNamespace="http://example.com/paymentService">
+            <!-- Tipo para la solicitud de pago -->
+            <xsd:element name="PaymentRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="document" type="xsd:string"/>
+                        <xsd:element name="phone" type="xsd:string"/>
+                        <xsd:element name="amount" type="xsd:float"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Tipo para la respuesta de pago -->
+            <xsd:element name="PaymentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                        <xsd:element name="code" type="xsd:string"/>
+                        <xsd:element name="message" type="xsd:string"/>
+                        <xsd:element name="data" type="xsd:string" minOccurs="0"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Tipo para la solicitud de confirmación de pago -->
+            <xsd:element name="ConfirmPaymentRequest">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="sessionId" type="xsd:string"/>
+                        <xsd:element name="token" type="xsd:string"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+
+            <!-- Tipo para la respuesta de confirmación de pago -->
+            <xsd:element name="ConfirmPaymentResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element name="success" type="xsd:boolean"/>
+                        <xsd:element name="code" type="xsd:string"/>
+                        <xsd:element name="message" type="xsd:string"/>
+                        <xsd:element name="walletBalance" type="xsd:float"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:schema>
+    </types>
+
+    <!-- Mensajes SOAP -->
+    <message name="PaymentRequestMessage">
+        <part name="parameters" element="tns:PaymentRequest"/>
+    </message>
+
+    <message name="PaymentResponseMessage">
+        <part name="parameters" element="tns:PaymentResponse"/>
+    </message>
+
+    <message name="ConfirmPaymentRequestMessage">
+        <part name="parameters" element="tns:ConfirmPaymentRequest"/>
+    </message>
+
+    <message name="ConfirmPaymentResponseMessage">
+        <part name="parameters" element="tns:ConfirmPaymentResponse"/>
+    </message>
+
+    <!-- Operaciones -->
+    <portType name="PaymentServicePortType">
+        <operation name="payment">
+            <input message="tns:PaymentRequestMessage"/>
+            <output message="tns:PaymentResponseMessage"/>
+        </operation>
+
+        <operation name="confirPayment">
+            <input message="tns:ConfirmPaymentRequestMessage"/>
+            <output message="tns:ConfirmPaymentResponseMessage"/>
+        </operation>
+    </portType>
+
+    <!-- Binding SOAP -->
+    <binding name="PaymentServiceBinding" type="tns:PaymentServicePortType">
+        <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        
+        <operation name="payment">
+            <soap:operation soapAction="http://example.com/paymentService/payment"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+
+        <operation name="confirPayment">
+            <soap:operation soapAction="http://example.com/paymentService/confirPayment"/>
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+    <!-- Definir el servicio -->
+    <service name="PaymentService">
+        <port name="PaymentServicePort" binding="tns:PaymentServiceBinding">
+            <soap:address location="http://example.com/api/payment"/>
+        </port>
+    </service>
+</definitions>

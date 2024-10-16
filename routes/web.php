@@ -19,12 +19,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('soap/client/register', [ClientController::class, 'register']);
+Route::post('soap/client', [ClientController::class, 'handle']);
 Route::post('soap/wallet/recharge', [WalletController::class, 'rechargeWallet']);
 Route::post('soap/wallet/balance', [WalletController::class, 'balance']);
 Route::post('soap/payment', [PaymentController::class, 'payment']);
 Route::post('soap/payment/confirm', [PaymentController::class, 'confirmPayment']);
 
-Route::get('/wsdl', function () {
+// Route::get('/wsdl', function () {
+//     return response()->file(public_path('wsdl/client.wsdl'));
+// });
+
+
+Route::get('/prueba', function () {
     return response()->file(public_path('wsdl/client.wsdl'));
 });
